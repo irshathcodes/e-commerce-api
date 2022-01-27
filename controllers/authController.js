@@ -1,0 +1,12 @@
+const mongoose = require("mongoose");
+const User = require("../models/User");
+
+const register = (req, res) => {
+	res.send("register");
+};
+
+const login = (req, res) => {
+	res.send("login");
+};
+
+module.exports = { register, login };
