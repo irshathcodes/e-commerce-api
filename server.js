@@ -8,13 +8,20 @@ const connectDB = require("./db/connectDB");
 const notFoundMiddleware = require("./middlewares/notFound");
 const errorHandlerMiddleware = require("./middlewares/errorHandler");
 const authRoute = require("./routes/authRoute");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 app.get("/", function (req, res) {
-	res.send("<h1>E-Commerce Api </h1>");
+	res.send("<h1> E-Commerce Api </h1>");
 });
+
+app.use(cors({ credentials: true }));
+app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoute);
 
+// These below two middlewares should always be placed in last.
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 

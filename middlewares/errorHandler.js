@@ -1,4 +1,4 @@
-module.exports = function errorHandler(err, req, res) {
+module.exports = function errorHandler(err, req, res, next) {
 	const customError = {
 		statusCode: err.statusCode || 500,
 		message: err.message || "Something went wrong (: please try again later.",
