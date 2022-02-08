@@ -51,6 +51,7 @@ async function verifyUser(req, res) {
 		const { email } = isTokenValid(verificationToken);
 
 		const user = await User.findOne({ email, verificationOtp });
+		``;
 
 		if (!user) {
 			throw new CustomApiError(400, "Invalid Otp!!");
@@ -67,6 +68,7 @@ async function verifyUser(req, res) {
 
 		await user.save();
 
+		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
 		res.status(200).json({ msg: "User Verified. Please Login." });
 	} catch (error) {
 		throw new CustomApiError(401, "Error, Please try again later");
