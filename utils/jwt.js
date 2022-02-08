@@ -14,7 +14,7 @@ const attachCookieToResponse = ({ res, userId, refreshToken }) => {
 	const oneDay = 1000 * 60 * 2;
 
 	res.cookie("accessToken", accessToken, {
-		maxAge: 1000 * 60,
+		maxAge: 1000 * 60 * 1,
 		signed: true,
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
