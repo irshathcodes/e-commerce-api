@@ -9,11 +9,11 @@ const UserSchema = new mongoose.Schema({
 		required: [true, "username should be provided"],
 		minlength: [2, "name is too short"],
 		maxlength: [50, "name is too big"],
-		role: {
-			type: String,
-			enum: ["user", "admin"],
-			default: "user",
-		},
+	},
+	role: {
+		type: String,
+		enum: ["user", "admin"],
+		default: "user",
 	},
 	email: {
 		type: String,

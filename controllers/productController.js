@@ -1,21 +1,38 @@
+const User = require("../models/User");
+const Product = require("../models/Product");
+const CustomApiError = require("../errors/CustomApiError");
+
 async function getAllProducts(req, res) {
-	res.send("get all products");
+	const products = await Product.find({});
+	res.status(200).json({ products });
 }
 
 async function getSingleProduct(req, res) {
-	res.send("get single product");
+	const singleProduct = await Product.findOne({ _id: req.params.id });
+	res.status(200).json({ singleProduct });
 }
 
 async function createProduct(req, res) {
-	res.send("create product");
+	const user = await User.findOne({ _id: req.user });
+	if (user.role !== "admin") {
+		throw new CustomApiError(403, "Not allowed to access this route");
+	}
+	const product = await Product.create(req.body);
+	res.status(201).json({ product });
 }
 
 async function updateProduct(req, res) {
-	res.send("update product");
+	const updatedProduct = await Product.findOneAndUpdate(
+		{ _id: req.params.id },
+		req.body,
+		{ runValidators: true, new: true }
+	);
+	res.status(200).json({ updatedProduct });
 }
 
 async function deleteProduct(req, res) {
-	res.send("delete product");
+	const deletedProduct = await Product.findOneAndDelete({ _id: req.params.id });
+	res.status(200).json({ msg: "product deleted successfully" });
 }
 
 module.exports = {
