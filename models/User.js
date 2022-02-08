@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-const { CustomApiError, stsCodes } = require("../errors/CustomApiError");
+const CustomApiError = require("../errors/CustomApiError");
 
 const UserSchema = new mongoose.Schema({
 	name: {
@@ -9,6 +9,11 @@ const UserSchema = new mongoose.Schema({
 		required: [true, "username should be provided"],
 		minlength: [2, "name is too short"],
 		maxlength: [50, "name is too big"],
+		role: {
+			type: String,
+			enum: ["user", "admin"],
+			default: "user",
+		},
 	},
 	email: {
 		type: String,
@@ -35,12 +40,20 @@ UserSchema.pre("save", async function () {
 	const isStrongPassword = validator.isStrongPassword(this.password);
 	if (!isStrongPassword) {
 		throw new CustomApiError(
-			stsCodes.BAD_REQUEST,
+			400,
 			"Provide a strong password include Uppercase, numbers, special characters"
 		);
 	}
+
+	if (!this.isModified("password")) return;
+
 	const salt = await bcryptjs.genSalt(10);
 	this.password = await bcryptjs.hash(this.password, salt);
 });
+
+UserSchema.methods.comparePassword = async function (passwordString) {
+	const isPasswordMatch = await bcryptjs.compare(passwordString, this.password);
+	return isPasswordMatch;
+};
 
 module.exports = mongoose.model("User", UserSchema);
