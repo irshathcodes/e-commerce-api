@@ -8,30 +8,46 @@ async function getAllProducts(req, res) {
 }
 
 async function getSingleProduct(req, res) {
+	if (!req.params.id) throw new CustomApiError(400, "product id is required");
+
 	const singleProduct = await Product.findOne({ _id: req.params.id });
+
+	if (!singleProduct) throw new CustomApiError(404, "No product found");
 	res.status(200).json({ singleProduct });
 }
 
 async function createProduct(req, res) {
-	const user = await User.findOne({ _id: req.user });
-	if (user.role !== "admin") {
-		throw new CustomApiError(403, "Not allowed to access this route");
-	}
+	if (!req.body) throw new CustomApiError(400, "Bad Request");
+
 	const product = await Product.create(req.body);
 	res.status(201).json({ product });
 }
 
 async function updateProduct(req, res) {
+	if (!req.params.id || !req.body)
+		throw new CustomApiError(400, "required fields are missing");
+
 	const updatedProduct = await Product.findOneAndUpdate(
 		{ _id: req.params.id },
 		req.body,
 		{ runValidators: true, new: true }
 	);
+
+	if (!updatedProduct)
+		throw new CustomApiError(404, "No Product found to update");
+
 	res.status(200).json({ updatedProduct });
 }
 
 async function deleteProduct(req, res) {
+	if (!req.params.id)
+		throw new CustomApiError(400, "required fields are missing");
+
 	const deletedProduct = await Product.findOneAndDelete({ _id: req.params.id });
+
+	if (!deletedProduct)
+		throw new CustomApiError(404, "No Product found to delete");
+
 	res.status(200).json({ msg: "product deleted successfully" });
 }
 

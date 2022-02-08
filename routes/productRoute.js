@@ -1,7 +1,10 @@
 const express = require("express");
 const Router = express.Router();
 
-const authenticationMiddleware = require("../middlewares/authentication");
+const {
+	authenticationMiddleware,
+	authorizationPermission,
+} = require("../middlewares/authentication");
 const {
 	getAllProducts,
 	getSingleProduct,
@@ -12,11 +15,11 @@ const {
 
 Router.route("/")
 	.get(getAllProducts)
-	.post(authenticationMiddleware, createProduct);
+	.post(authenticationMiddleware, authorizationPermission, createProduct);
 
 Router.route("/:id")
 	.get(getSingleProduct)
-	.patch(authenticationMiddleware, updateProduct)
-	.delete(authenticationMiddleware, deleteProduct);
+	.patch(authenticationMiddleware, authorizationPermission, updateProduct)
+	.delete(authenticationMiddleware, authorizationPermission, deleteProduct);
 
 module.exports = Router;

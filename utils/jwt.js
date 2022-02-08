@@ -11,7 +11,7 @@ const attachCookieToResponse = ({ res, userId, refreshToken }) => {
 	const accessToken = createJWT({ userId });
 	const refreshTokenJWT = createJWT({ userId, refreshToken });
 
-	const oneDay = 1000 * 60 * 10;
+	const oneDay = 1000 * 60 * 60 * 24;
 
 	res.cookie("accessToken", accessToken, {
 		maxAge: 1000 * 60 * 1,
