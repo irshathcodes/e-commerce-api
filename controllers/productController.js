@@ -3,12 +3,34 @@ const CustomApiError = require("../errors/CustomApiError");
 const axios = require("axios");
 
 async function getAllProducts(req, res) {
-	const { sort, select, page, limit, ...queryObject } = req.query;
+	const { sort, select, page, limit, numericFilters, ...queryObject } =
+		req.query;
 
 	if (queryObject.name)
 		queryObject.name = { $regex: queryObject.name, $options: "i" };
 
-	let result = Product.find(queryObject).setOptions({ sanitizeFilter: true });
+	if (numericFilters) {
+		const operatorMap = {
+			">": "$gt",
+			"<": "$lt",
+			">=": "$gte",
+			"<=": "$lte",
+			"==": "$eq",
+		};
+
+		const regex = /\b(<|<=|==|>|>=)\b/g;
+
+		// Replacing readable syntax to mongoose operators using regex.
+		numericFilters
+			.replace(regex, (match) => `-${operatorMap[match]}-`)
+			.split(",") // spliting filters if there are multiple numeric filters (eg: NumericFilters=price>300,rating<=4.5)
+			.forEach((eachFilter) => {
+				const [field, operator, value] = eachFilter.split("-");
+				queryObject[field] = { [operator]: Number(value) }; // changed to mongoose query (eg: price: {$gt: 400})
+			});
+	}
+
+	let result = Product.find(queryObject);
 
 	//sorting products
 	if (sort) {
