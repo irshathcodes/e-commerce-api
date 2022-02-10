@@ -6,6 +6,7 @@ const app = express();
 
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const connectDB = require("./db/connectDB");
 const notFoundMiddleware = require("./middlewares/notFound");
@@ -20,6 +21,7 @@ app.get("/", function (req, res) {
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(mongoSanitize());
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/products", productRoute);

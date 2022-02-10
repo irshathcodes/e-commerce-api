@@ -51,7 +51,6 @@ async function verifyUser(req, res) {
 		const { email } = isTokenValid(verificationToken);
 
 		const user = await User.findOne({ email, verificationOtp });
-		``;
 
 		if (!user) {
 			throw new CustomApiError(400, "Invalid Otp!!");

@@ -1,10 +1,39 @@
-const User = require("../models/User");
 const Product = require("../models/Product");
 const CustomApiError = require("../errors/CustomApiError");
+const axios = require("axios");
 
 async function getAllProducts(req, res) {
-	const products = await Product.find({});
-	res.status(200).json({ products });
+	const { sort, select, page, limit, ...queryObject } = req.query;
+
+	if (queryObject.name)
+		queryObject.name = { $regex: queryObject.name, $options: "i" };
+
+	let result = Product.find(queryObject).setOptions({ sanitizeFilter: true });
+
+	//sorting products
+	if (sort) {
+		const sortedList = sort.split(",").join(" ");
+		result = result.sort(sortedList);
+	} else {
+		result = result.sort("-createdAt");
+	}
+
+	// selecting specific fields in the products document
+	if (select) {
+		const selectedFields = select.split(",").join(" ");
+		result = result.select(selectedFields);
+	}
+
+	//Creating Pagination
+	const pageNo = Number(page) || 1;
+	const limitProducts = Number(limit) || 10;
+	const skip = (pageNo - 1) * limitProducts;
+
+	result = result.skip(skip).limit(limitProducts);
+
+	const products = await result;
+
+	res.status(200).json({ nbHits: products.length, products });
 }
 
 async function getSingleProduct(req, res) {
@@ -51,10 +80,32 @@ async function deleteProduct(req, res) {
 	res.status(200).json({ msg: "product deleted successfully" });
 }
 
+async function insertProducts(req, res) {
+	const allProducts = await axios.get(
+		"https://fakestoreapi.com/products?limit=40"
+	);
+
+	const sortedProducts = allProducts.data.map((item) => {
+		const {
+			title: name,
+			price,
+			description,
+			category,
+			image: productImage,
+		} = item;
+		return { name, price, description, category, productImage };
+	});
+
+	// const products = await Product.insertMany(sortedProducts);
+
+	res.status(201).json({ products });
+}
+
 module.exports = {
 	getAllProducts,
 	getSingleProduct,
 	createProduct,
 	updateProduct,
 	deleteProduct,
+	insertProducts,
 };
