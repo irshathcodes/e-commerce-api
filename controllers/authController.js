@@ -47,6 +47,13 @@ async function verifyUser(req, res) {
 	const { verificationOtp } = req.body;
 	const { verificationToken } = req.signedCookies;
 
+	if (!verificationOtp) {
+		throw new CustomApiError(
+			400,
+			"Verification time expired, Please send token again."
+		);
+	}
+
 	try {
 		const { email } = isTokenValid(verificationToken);
 
@@ -55,17 +62,13 @@ async function verifyUser(req, res) {
 		if (!user) {
 			throw new CustomApiError(400, "Invalid Otp!!");
 		}
-
-		if (!verificationOtp) {
-			throw new CustomApiError(
-				400,
-				"Verification time expired, Please send token again."
-			);
-		}
-
-		user.isVerified = true;
-
-		await user.save();
+		await User.updateOne(
+			{ _id: user._id },
+			{
+				$unset: { verificationOtp: "" },
+				$set: { isVerified: true },
+			}
+		);
 
 		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
 		res.status(200).json({ msg: "User Verified. Please Login." });
