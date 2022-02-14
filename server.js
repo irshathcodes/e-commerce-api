@@ -18,6 +18,7 @@ app.get("/", function (req, res) {
 	res.send("<h1> E-Commerce Api </h1>");
 });
 
+app.use(express.static("./public"));
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));

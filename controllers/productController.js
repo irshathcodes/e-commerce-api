@@ -102,6 +102,10 @@ async function deleteProduct(req, res) {
 	res.status(200).json({ msg: "product deleted successfully" });
 }
 
+async function uploadProductImg(req, res) {
+	res.status(201).json({ ...req.file });
+}
+
 async function insertProducts(req, res) {
 	const allProducts = await axios.get(
 		"https://fakestoreapi.com/products?limit=40"
@@ -129,5 +133,6 @@ module.exports = {
 	createProduct,
 	updateProduct,
 	deleteProduct,
+	uploadProductImg,
 	insertProducts,
 };
