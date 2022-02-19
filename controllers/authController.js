@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const CustomApiError = require("../errors/CustomApiError");
+const CustomError = require("../errors/CustomError");
 const crypto = require("crypto");
 const Token = require("../models/Token");
 const {
@@ -13,13 +13,13 @@ async function register(req, res) {
 	const { name, email, password } = req.body;
 
 	if (!name || !email || !password) {
-		throw new CustomApiError(400, "All Fields are required");
+		throw new CustomError(400, "All Fields are required");
 	}
 
 	const isUserExists = await User.findOne({ email });
 
 	if (isUserExists) {
-		throw new CustomApiError(400, "User All ready exists, please login");
+		throw new CustomError(400, "User All ready exists, please login");
 	}
 
 	const verificationOtp = crypto.randomInt(100000, 999999);
@@ -48,7 +48,7 @@ async function verifyUser(req, res) {
 	const { verificationToken } = req.signedCookies;
 
 	if (!verificationOtp) {
-		throw new CustomApiError(
+		throw new CustomError(
 			400,
 			"Verification time expired, Please send token again."
 		);
@@ -60,7 +60,7 @@ async function verifyUser(req, res) {
 		const user = await User.findOne({ email, verificationOtp });
 
 		if (!user) {
-			throw new CustomApiError(400, "Invalid Otp!!");
+			throw new CustomError(400, "Invalid Otp!!");
 		}
 		await User.updateOne(
 			{ _id: user._id },
@@ -73,7 +73,7 @@ async function verifyUser(req, res) {
 		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
 		res.status(200).json({ msg: "User Verified. Please Login." });
 	} catch (error) {
-		throw new CustomApiError(401, "Error, Please try again later");
+		throw new CustomError(401, "Error, Please try again later");
 	}
 }
 
@@ -81,23 +81,23 @@ async function login(req, res) {
 	const { email, password } = req.body;
 
 	if (!email || !password) {
-		throw new CustomApiError(400, "All Fields are required");
+		throw new CustomError(400, "All Fields are required");
 	}
 
 	const user = await User.findOne({ email });
 
 	if (!user) {
-		throw new CustomApiError(401, "Invalid Credentials");
+		throw new CustomError(401, "Invalid Credentials");
 	}
 
 	if (!user.isVerified) {
-		throw new CustomApiError(401, "User not verified!!");
+		throw new CustomError(401, "User not verified!!");
 	}
 
 	const isPasswordMatch = await user.comparePassword(password);
 
 	if (!isPasswordMatch) {
-		throw new CustomApiError(401, "Incorrect Password");
+		throw new CustomError(401, "Incorrect Password");
 	}
 
 	let refreshToken = "";
@@ -107,7 +107,7 @@ async function login(req, res) {
 	if (existingToken) {
 		const { isValid } = existingToken;
 		if (!isValid) {
-			throw new CustomApiError(403, "User is not a valid user");
+			throw new CustomError(403, "User is not a valid user");
 		}
 		refreshToken = existingToken.refreshToken;
 		attachCookieToResponse({ res, userId: user._id, refreshToken });

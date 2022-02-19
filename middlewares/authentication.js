@@ -1,4 +1,4 @@
-const CustomApiError = require("../errors/CustomApiError");
+const CustomError = require("../errors/CustomError");
 const Token = require("../models/Token");
 const User = require("../models/User");
 const { isTokenValid, attachCookieToResponse } = require("../utils/jwt");
@@ -19,7 +19,7 @@ async function authenticationMiddleware(req, res, next) {
 		});
 
 		if (!existingToken || !existingToken.isValid) {
-			throw new CustomApiError(403, "Authentication Failed");
+			throw new CustomError(403, "Authentication Failed");
 		}
 
 		attachCookieToResponse({
@@ -32,14 +32,14 @@ async function authenticationMiddleware(req, res, next) {
 
 		next();
 	} catch (error) {
-		throw new CustomApiError(401, "Authentication Invalid");
+		throw new CustomError(401, "Authentication Invalid");
 	}
 }
 
 async function authorizationPermission(req, res, next) {
 	const user = await User.findOne({ _id: req.user });
 	if (user.role !== "admin")
-		throw new CustomApiError(403, "Not allowed to access this route");
+		throw new CustomError(403, "Not allowed to access this route");
 	next();
 }
 

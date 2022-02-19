@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-const CustomApiError = require("../errors/CustomApiError");
+const CustomError = require("../errors/CustomError");
 
 const UserSchema = new mongoose.Schema({
 	name: {
@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre("save", async function () {
 	const isStrongPassword = validator.isStrongPassword(this.password);
 	if (!isStrongPassword) {
-		throw new CustomApiError(
+		throw new CustomError(
 			400,
 			"Provide a strong password include Uppercase, numbers, special characters"
 		);
