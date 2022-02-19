@@ -4,10 +4,17 @@ const router = express.Router();
 const {
 	createOrder,
 	addShippingDetails,
+	getAllOrders,
 } = require("../controllers/orderController");
-const { authenticationMiddleware } = require("../middlewares/authentication");
+const {
+	authenticationMiddleware,
+	authorizationPermission,
+} = require("../middlewares/authentication");
 
-router.route("/").post(authenticationMiddleware, createOrder);
-router.post("/:orderId", addShippingDetails);
+router
+	.route("/")
+	.post(authenticationMiddleware, createOrder)
+	.get(authenticationMiddleware, authorizationPermission, getAllOrders);
+router.post("/:orderId", authenticationMiddleware, addShippingDetails);
 
 module.exports = router;

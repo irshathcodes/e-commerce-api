@@ -6,6 +6,7 @@ const CustomError = require("../errors/CustomError");
 const UserSchema = new mongoose.Schema({
 	name: {
 		type: String,
+		trim: true,
 		required: [true, "username should be provided"],
 		minlength: [2, "name is too short"],
 		maxlength: [50, "name is too big"],
@@ -21,13 +22,13 @@ const UserSchema = new mongoose.Schema({
 		unique: true,
 		validate: {
 			validator: validator.isEmail,
-			message: (props) => `${props.value} is not a valid email id`,
+			message: (props) => `${props.value} is not a valid email`,
 		},
 	},
 	password: {
 		type: String,
 		required: [true, "password is required"],
-		min: [8, "password is too short"],
+		minlength: [8, "password is too short"],
 	},
 	isVerified: {
 		type: Boolean,

@@ -56,6 +56,22 @@ async function addShippingDetails(req, res) {
 	const { orderId } = req.params;
 
 	if (!orderId) throw new CustomError(400, "Order Id is required");
+
+	const order = await Order.findOneAndUpdate(
+		{ user: req.user, _id: orderId },
+		{ shippingDetails: req.body },
+		{ new: true, runValidators: true }
+	);
+
+	if (!order) throw new CustomError(404, `No order found with id ${orderId}`);
+
+	res.status(201).json({ order });
 }
 
-module.exports = { createOrder, addShippingDetails };
+async function getAllOrders(req, res) {
+	const orders = await Order.find({});
+
+	res.status(200).json({ nbHits: orders.length, orders });
+}
+
+module.exports = { createOrder, addShippingDetails, getAllOrders };
