@@ -112,17 +112,11 @@ async function insertProducts(req, res) {
 	);
 
 	const sortedProducts = allProducts.data.map((item) => {
-		const {
-			title: name,
-			price,
-			description,
-			category,
-			image: productImage,
-		} = item;
-		return { name, price, description, category, productImage };
+		const { title: name, price, description, category, image } = item;
+		return { name, price, description, category, image };
 	});
 
-	// const products = await Product.insertMany(sortedProducts);
+	const products = await Product.insertMany(sortedProducts);
 
 	res.status(201).json({ products });
 }

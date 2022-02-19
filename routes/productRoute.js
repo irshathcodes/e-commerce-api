@@ -1,5 +1,5 @@
 const express = require("express");
-const Router = express.Router();
+const router = express.Router();
 const upload = require("../utils/uploadImage");
 
 const {
@@ -16,21 +16,23 @@ const {
 	insertProducts,
 } = require("../controllers/productController");
 
-Router.route("/")
+router
+	.route("/")
 	.get(getAllProducts)
 	.post(authenticationMiddleware, authorizationPermission, createProduct);
 
-Router.route("/:id")
+router
+	.route("/:id")
 	.get(getSingleProduct)
 	.patch(authenticationMiddleware, authorizationPermission, updateProduct)
 	.delete(authenticationMiddleware, authorizationPermission, deleteProduct);
 
-Router.post(
+router.post(
 	"/upload-product-img",
 	upload.single("productImage"),
 	uploadProductImg
 );
 
-Router.post("/insert-products", insertProducts);
+router.post("/insert-products", insertProducts);
 
-module.exports = Router;
+module.exports = router;

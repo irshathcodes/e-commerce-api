@@ -13,6 +13,7 @@ const notFoundMiddleware = require("./middlewares/notFound");
 const errorHandlerMiddleware = require("./middlewares/errorHandler");
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
+const orderRoute = require("./routes/orderRoute");
 
 app.get("/", function (req, res) {
 	res.send("<h1> E-Commerce Api </h1>");
@@ -26,6 +27,7 @@ app.use(mongoSanitize());
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/products", productRoute);
+app.use("/api/v1/order", orderRoute);
 
 // These below two middlewares should always be placed in last.
 app.use(notFoundMiddleware);
