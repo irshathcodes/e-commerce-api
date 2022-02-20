@@ -7,7 +7,7 @@ const OrderItemSchema = new mongoose.Schema({
 	price: { type: Number, required: true },
 	quantity: { type: Number, required: true },
 	product: {
-		type: mongoose.Schema.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: "Product",
 		required: true,
 	},
@@ -48,7 +48,7 @@ const OrderSchema = new mongoose.Schema(
 			enum: ["pending", "paid", "delivered", "cancelled", "failed"],
 			default: "pending",
 		},
-		user: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+		user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 		shippingDetails: ShippingDetailsSchema,
 	},
 	{ timestamps: true }

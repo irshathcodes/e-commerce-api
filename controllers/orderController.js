@@ -3,7 +3,10 @@ const Product = require("../models/Product");
 const CustomError = require("../errors/CustomError");
 
 async function createOrder(req, res) {
-	const { cartItems, shippingfee, tax } = req.body;
+	const { cartItems } = req.body;
+
+	const shippingfee = 30;
+	const tax = 12;
 
 	if (!cartItems || !shippingfee || !tax)
 		throw new CustomError(400, "Please provide the required fields");
@@ -37,6 +40,21 @@ async function createOrder(req, res) {
 		subtotal += price * item.quantity;
 	}
 
+	const checkingUniqueOrders = [
+		...new Set(
+			orderItems.map((item) => {
+				return item.product.toString();
+			})
+		),
+	];
+
+	// Checking if items in the cart are unique products, not duplicated ones.
+	if (orderItems.length !== checkingUniqueOrders.length)
+		throw new CustomError(
+			400,
+			"Duplicate products are not allowed in cartItems array"
+		);
+
 	const total = subtotal + tax + shippingfee;
 
 	// Creating the order.
@@ -53,7 +71,7 @@ async function createOrder(req, res) {
 }
 
 async function addShippingDetails(req, res) {
-	const { orderId } = req.params;
+	const { orderId } = req.body;
 
 	if (!orderId) throw new CustomError(400, "Order Id is required");
 

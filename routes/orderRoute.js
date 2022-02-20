@@ -15,6 +15,7 @@ router
 	.route("/")
 	.post(authenticationMiddleware, createOrder)
 	.get(authenticationMiddleware, authorizationPermission, getAllOrders);
-router.post("/:orderId", authenticationMiddleware, addShippingDetails);
+
+router.post("/shipping-address", authenticationMiddleware, addShippingDetails);
 
 module.exports = router;
