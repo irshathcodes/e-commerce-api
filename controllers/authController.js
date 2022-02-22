@@ -27,8 +27,15 @@ async function register(req, res) {
 	}
 
 	const verificationOtp = crypto.randomInt(100000, 999999);
+	const tokenExpiration = new Date(Date.now() + 1000 * 10);
 
-	const user = await User.create({ name, email, password, verificationOtp });
+	const user = await User.create({
+		name,
+		email,
+		password,
+		verificationOtp,
+		tokenExpiration,
+	});
 
 	await sendEmail({
 		to: user.email,
@@ -41,6 +48,7 @@ async function register(req, res) {
 	res.cookie("verificationToken", verificationToken, {
 		httpOnly: true,
 		signed: true,
+		secure: process.env.NODE_ENV === "production",
 		expires: new Date(Date.now() + 1000 * 60 * 10),
 	});
 
@@ -64,16 +72,22 @@ async function verifyUser(req, res) {
 		const user = await User.findOne({ email, verificationOtp });
 
 		if (!user) {
-			throw new CustomError(400, "Invalid Otp!!");
+			throw new CustomError(400, "Error, please try again later");
 		}
+
+		const currentDate = new Date();
+
+		if (user.tokenExpiration < currentDate)
+			throw new CustomError(400, "Otp Expired");
 
 		user.isVerified = true;
 		user.verificationOtp = null;
+		user.tokenExpiration = null;
 
 		await user.save();
 
 		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
-		res.status(200).json({ msg: "User Verified. Please Login." });
+		res.status(200).json({ msg: "User Verified" });
 	} catch (error) {
 		throw new CustomError(401, "Error, Please try again later");
 	}
