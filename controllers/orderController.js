@@ -92,4 +92,50 @@ async function getAllOrders(req, res) {
 	res.status(200).json({ nbHits: orders.length, orders });
 }
 
-module.exports = { createOrder, addShippingDetails, getAllOrders };
+async function getMyOrders(req, res) {
+	const orders = await Order.find({ user: req.user });
+
+	if (!orders) throw new CustomError(404, "No orders found");
+
+	res.status(200).json({ orders });
+}
+
+async function getMySingleOrder(req, res) {
+	const { orderId } = req.params;
+
+	if (!orderId) throw new CustomError(400, "Order Id is required!");
+
+	const order = await Order.findOne({ user: req.user, _id: orderId });
+
+	if (!order) throw new CustomError(404, `No order found with id ${orderId}`);
+
+	res.status(200).json({ order });
+}
+
+async function updateOrder(req, res) {
+	const {
+		params: { orderId },
+		body: { status },
+	} = req;
+
+	if (!orderId) throw new CustomError(400, "order Id is required!");
+
+	const order = await Order.findOneAndUpdate(
+		{ _id: orderId },
+		{ status },
+		{ new: true, runValidators: true }
+	);
+
+	if (!order) throw new CustomError(404, `No order found with id ${orderId}`);
+
+	res.status(200).json({ order });
+}
+
+module.exports = {
+	createOrder,
+	addShippingDetails,
+	getAllOrders,
+	getMyOrders,
+	updateOrder,
+	getMySingleOrder,
+};

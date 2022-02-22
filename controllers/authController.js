@@ -2,6 +2,8 @@ const User = require("../models/User");
 const CustomError = require("../errors/CustomError");
 const crypto = require("crypto");
 const Token = require("../models/Token");
+const removeCookies = require("../utils/removeCookies");
+
 const {
 	createJWT,
 	isTokenValid,
@@ -11,6 +13,8 @@ const sendEmail = require("../utils/sendEmail");
 
 async function register(req, res) {
 	const { name, email, password } = req.body;
+
+	removeCookies(res);
 
 	if (!name || !email || !password) {
 		throw new CustomError(400, "All Fields are required");
@@ -26,7 +30,7 @@ async function register(req, res) {
 
 	const user = await User.create({ name, email, password, verificationOtp });
 
-	sendEmail({
+	await sendEmail({
 		to: user.email,
 		subject: "User Account Verification",
 		html: `<span> OTP Verification code: <h1> ${user.verificationOtp} </h1> </span>  `,
@@ -37,7 +41,7 @@ async function register(req, res) {
 	res.cookie("verificationToken", verificationToken, {
 		httpOnly: true,
 		signed: true,
-		expires: new Date(Date.now() + 1000 * 60 * 2),
+		expires: new Date(Date.now() + 1000 * 60 * 10),
 	});
 
 	res.status(201).json({ msg: "Check your email for otp verification." });
@@ -62,13 +66,11 @@ async function verifyUser(req, res) {
 		if (!user) {
 			throw new CustomError(400, "Invalid Otp!!");
 		}
-		await User.updateOne(
-			{ _id: user._id },
-			{
-				$unset: { verificationOtp: "" },
-				$set: { isVerified: true },
-			}
-		);
+
+		user.isVerified = true;
+		user.verificationOtp = null;
+
+		await user.save();
 
 		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
 		res.status(200).json({ msg: "User Verified. Please Login." });
@@ -79,6 +81,8 @@ async function verifyUser(req, res) {
 
 async function login(req, res) {
 	const { email, password } = req.body;
+
+	removeCookies(res);
 
 	if (!email || !password) {
 		throw new CustomError(400, "All Fields are required");
@@ -131,4 +135,61 @@ async function login(req, res) {
 	res.status(200).json({ username: user.name });
 }
 
-module.exports = { register, verifyUser, login };
+async function forgotPassword(req, res) {
+	const { email } = req.body;
+
+	removeCookies(res);
+
+	if (!email) throw new CustomError(400, "please provide valid email");
+
+	const user = await User.findOne({ email });
+
+	if (user) {
+		const verificationToken = crypto.randomBytes(40).toString("hex");
+
+		await sendEmail({
+			to: user.email,
+			subject: "Reset Password Link",
+			html: `<span> Click the link to reset the password </span> 
+	<a href="${process.env.CLIENT_DOMAIN}/user/reset-password?email=${user.email}&token=${verificationToken}">Reset Password</a>
+	`,
+		});
+
+		user.verificationToken = verificationToken;
+		user.tokenExpiration = new Date(Date.now() + 1000 * 60 * 10);
+
+		await user.save();
+	}
+
+	res.status(200).json({ msg: "check your email for verification link" });
+}
+
+async function resetPassword(req, res) {
+	const { verificationToken, email, password } = req.body;
+
+	removeCookies(res);
+
+	if (!verificationToken || !email || !password)
+		throw new CustomError(400, "please provide all the required fields");
+
+	const user = await User.findOne({ email });
+
+	if (user) {
+		const currentDate = new Date();
+
+		if (
+			user.verificationToken === verificationToken &&
+			user.tokenExpiration > currentDate
+		) {
+			user.password = password;
+			user.verificationToken = null;
+			user.tokenExpiration = null;
+
+			await user.save();
+		}
+	}
+
+	res.status(200).json({ msg: "reset password" });
+}
+
+module.exports = { register, verifyUser, login, forgotPassword, resetPassword };
