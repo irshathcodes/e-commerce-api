@@ -3,12 +3,9 @@ const CustomError = require("../errors/CustomError");
 const crypto = require("crypto");
 const Token = require("../models/Token");
 const removeCookies = require("../utils/removeCookies");
+const jwt = require("jsonwebtoken");
 
-const {
-	createJWT,
-	isTokenValid,
-	attachCookieToResponse,
-} = require("../utils/jwt");
+const { createJWT, attachCookieToResponse } = require("../utils/jwt");
 const sendEmail = require("../utils/sendEmail");
 
 async function register(req, res) {
@@ -27,7 +24,7 @@ async function register(req, res) {
 	}
 
 	const verificationOtp = crypto.randomInt(100000, 999999);
-	const tokenExpiration = new Date(Date.now() + 1000 * 10);
+	const tokenExpiration = new Date(Date.now() + 1000 * 60 * 10);
 
 	const user = await User.create({
 		name,
@@ -65,32 +62,32 @@ async function verifyUser(req, res) {
 			"Verification time expired, Please send token again."
 		);
 	}
+	res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
 
-	try {
-		const { email } = isTokenValid(verificationToken);
+	let email;
+	jwt.verify(verificationToken, process.env.JWT_SECRET, (err, decoded) => {
+		if (err) throw new CustomError(400, "Error, please try again later");
+		email = decoded.email;
+	});
 
-		const user = await User.findOne({ email, verificationOtp });
+	const user = await User.findOne({ email, verificationOtp });
 
-		if (!user) {
-			throw new CustomError(400, "Error, please try again later");
-		}
-
-		const currentDate = new Date();
-
-		if (user.tokenExpiration < currentDate)
-			throw new CustomError(400, "Otp Expired");
-
-		user.isVerified = true;
-		user.verificationOtp = null;
-		user.tokenExpiration = null;
-
-		await user.save();
-
-		res.cookie("verificationToken", "done", { expires: new Date(Date.now()) });
-		res.status(200).json({ msg: "User Verified" });
-	} catch (error) {
-		throw new CustomError(401, "Error, Please try again later");
+	if (!user) {
+		throw new CustomError(400, "Error, please try again later");
 	}
+
+	const currentDate = new Date();
+
+	if (user.tokenExpiration < currentDate)
+		throw new CustomError(400, "Otp Expired");
+
+	user.isVerified = true;
+	user.verificationOtp = null;
+	user.tokenExpiration = null;
+
+	await user.save();
+
+	res.status(200).json({ msg: "User Verified" });
 }
 
 async function login(req, res) {
@@ -206,4 +203,18 @@ async function resetPassword(req, res) {
 	res.status(200).json({ msg: "reset password" });
 }
 
-module.exports = { register, verifyUser, login, forgotPassword, resetPassword };
+async function logout(req, res) {
+	await Token.findOneAndDelete({ userId: req.user });
+
+	removeCookies(res);
+	res.status(200).json({ msg: "user logged out" });
+}
+
+module.exports = {
+	register,
+	verifyUser,
+	login,
+	forgotPassword,
+	resetPassword,
+	logout,
+};
