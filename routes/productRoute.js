@@ -12,11 +12,13 @@ const {
 	createProduct,
 	updateProduct,
 	deleteProduct,
-	uploadProductImg,
 	insertProducts,
 } = require("../controllers/productController");
 
-router.route("/").get(getAllProducts).post(createProduct);
+router
+	.route("/")
+	.get(getAllProducts)
+	.post(upload.single("productImage"), createProduct);
 // .post(authenticationMiddleware, authorizationPermission, createProduct);
 
 router
@@ -25,11 +27,11 @@ router
 	.patch(authenticationMiddleware, authorizationPermission, updateProduct)
 	.delete(authenticationMiddleware, authorizationPermission, deleteProduct);
 
-router.post(
-	"/upload-product-image",
-	upload.single("productImage"),
-	uploadProductImg
-);
+// router.post(
+// 	"/upload-product-image",
+// 	upload.single("productImage"),
+// 	uploadProductImg
+// );
 
 router.post("/insert-products", insertProducts);
 

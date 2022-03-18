@@ -9,6 +9,14 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const connectDB = require("./db/connectDB");
 const notFoundMiddleware = require("./middlewares/notFound");
 const errorHandlerMiddleware = require("./middlewares/errorHandler");

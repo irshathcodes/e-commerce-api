@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const CustomError = require("../errors/CustomError");
+const cloudinary = require("cloudinary").v2;
 const axios = require("axios").default;
 
 async function getAllProducts(req, res) {
@@ -70,10 +71,15 @@ async function getSingleProduct(req, res) {
 async function createProduct(req, res) {
 	if (!req.body) throw new CustomError(400, "Bad Request");
 
-	console.log(req.body);
+	console.log(req.file);
 
 	const product = await Product.create(req.body);
-	res.status(201).json({ product });
+
+	const result = await cloudinary.uploader.upload(req.file.path, {
+		public_id: product._id,
+	});
+
+	res.status(201).json({ result, id: product._id });
 }
 
 async function updateProduct(req, res) {
@@ -101,11 +107,6 @@ async function deleteProduct(req, res) {
 	res.status(200).json({ msg: "product deleted successfully" });
 }
 
-async function uploadProductImg(req, res) {
-	console.log(req.body);
-	res.status(201).json({ filename: req.file });
-}
-
 async function insertProducts(req, res) {
 	var options = {
 		method: "GET",
@@ -130,6 +131,5 @@ module.exports = {
 	createProduct,
 	updateProduct,
 	deleteProduct,
-	uploadProductImg,
 	insertProducts,
 };
