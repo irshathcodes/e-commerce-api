@@ -16,10 +16,8 @@ const {
 	insertProducts,
 } = require("../controllers/productController");
 
-router
-	.route("/")
-	.get(getAllProducts)
-	.post(authenticationMiddleware, authorizationPermission, createProduct);
+router.route("/").get(getAllProducts).post(createProduct);
+// .post(authenticationMiddleware, authorizationPermission, createProduct);
 
 router
 	.route("/:id")
@@ -28,7 +26,7 @@ router
 	.delete(authenticationMiddleware, authorizationPermission, deleteProduct);
 
 router.post(
-	"/upload-product-img",
+	"/upload-product-image",
 	upload.single("productImage"),
 	uploadProductImg
 );

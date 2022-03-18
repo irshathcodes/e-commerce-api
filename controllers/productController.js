@@ -1,6 +1,6 @@
 const Product = require("../models/Product");
 const CustomError = require("../errors/CustomError");
-const axios = require("axios");
+const axios = require("axios").default;
 
 async function getAllProducts(req, res) {
 	const { sort, select, page, limit, numericFilters, ...queryObject } =
@@ -70,6 +70,8 @@ async function getSingleProduct(req, res) {
 async function createProduct(req, res) {
 	if (!req.body) throw new CustomError(400, "Bad Request");
 
+	console.log(req.body);
+
 	const product = await Product.create(req.body);
 	res.status(201).json({ product });
 }
@@ -100,22 +102,26 @@ async function deleteProduct(req, res) {
 }
 
 async function uploadProductImg(req, res) {
-	res.status(201).json({ ...req.file });
+	console.log(req.body);
+	res.status(201).json({ filename: req.file });
 }
 
 async function insertProducts(req, res) {
-	const allProducts = await axios.get(
-		"https://fakestoreapi.com/products?limit=40"
-	);
+	var options = {
+		method: "GET",
+		url: "https://sephora.p.rapidapi.com/products/list",
+		params: { categoryId: "cat1230034", pageSize: "60", currentPage: "1" },
+		headers: {
+			"x-rapidapi-host": "sephora.p.rapidapi.com",
+			"x-rapidapi-key": "eacd41191amsh5be462fa8dd0860p101dd0jsn1064e05d224e",
+		},
+	};
 
-	const sortedProducts = allProducts.data.map((item) => {
-		const { title: name, price, description, category, image } = item;
-		return { name, price, description, category, image };
-	});
+	const response = await axios.request(options);
 
-	const products = await Product.insertMany(sortedProducts);
+	const data = response.data;
 
-	res.status(201).json({ products });
+	res.status(201).json({ data });
 }
 
 module.exports = {
