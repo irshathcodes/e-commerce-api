@@ -10,7 +10,7 @@ const ProductSchema = new mongoose.Schema(
 			required: true,
 		},
 		featured: { type: Boolean, default: false },
-		size: { type: Array, required: true },
+		size: [String],
 		color: String,
 		image: { type: String },
 	},
