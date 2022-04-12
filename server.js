@@ -4,6 +4,8 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 
+app.set("trust proxy", 1);
+
 // Security Packages
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
