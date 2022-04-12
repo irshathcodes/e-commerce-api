@@ -115,29 +115,10 @@ async function deleteProduct(req, res) {
 	res.status(200).json({ msg: "product deleted successfully" });
 }
 
-async function insertProducts(req, res) {
-	var options = {
-		method: "GET",
-		url: "https://sephora.p.rapidapi.com/products/list",
-		params: { categoryId: "cat1230034", pageSize: "60", currentPage: "1" },
-		headers: {
-			"x-rapidapi-host": "sephora.p.rapidapi.com",
-			"x-rapidapi-key": "eacd41191amsh5be462fa8dd0860p101dd0jsn1064e05d224e",
-		},
-	};
-
-	const response = await axios.request(options);
-
-	const data = response.data;
-
-	res.status(201).json({ data });
-}
-
 module.exports = {
 	getAllProducts,
 	getSingleProduct,
 	createProduct,
 	updateProduct,
 	deleteProduct,
-	insertProducts,
 };
