@@ -2,7 +2,6 @@ const Product = require("../models/Product");
 const CustomError = require("../errors/CustomError");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
-const axios = require("axios").default;
 
 async function getAllProducts(req, res) {
 	const { sort, select, page, limit, numericFilters, ...queryObject } =
