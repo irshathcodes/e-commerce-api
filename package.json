@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "nodemon server.js"
+		"start": "node server.js",
+		"dev": "nodemon server.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -29,5 +30,8 @@
 	"devDependencies": {
 		"axios": "^0.25.0",
 		"nodemon": "^2.0.15"
+	},
+	"engines": {
+		"node": "16.x"
 	}
 }
