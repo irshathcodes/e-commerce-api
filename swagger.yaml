@@ -1,0 +1,496 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce-Api
+  contact: {}
+  version: "1.0"
+servers:
+  - url: https://ecommercenode-api.herokuapp.com/api/v1
+    variables: {}
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      operationId: Register
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+            example:
+              name: Your Name
+              email: example@gmail.com
+              password: Secret@123
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      operationId: Login
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/verify-user:
+    post:
+      tags:
+        - Auth
+      summary: Verify User
+      operationId: VerifyUser
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyUserRequest"
+            example:
+              verificationOtp: 521483
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: Forgot Password
+      operationId: ForgotPassword
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+            example:
+              email: example@gmail.com
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset Password
+      operationId: ResetPassword
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+            example:
+              email: example@gmail.com
+              password: Secret@123
+              verificationToken: 670c8f0cd02ac067e4f6f34130bfc1d5ff3245ecf66018134e97047661498a97feccd394083d288a
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /auth/logout:
+    delete:
+      tags:
+        - Auth
+      summary: Logout
+      operationId: Logout
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get All Products
+      operationId: GetAllProducts
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+    post:
+      tags:
+        - Products
+      summary: Create Product
+      operationId: CreateProduct
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            encoding: {}
+            schema:
+              required:
+                - name
+                - description
+                - category
+                - price
+                - size
+                - productImage
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                price:
+                  type: string
+                size:
+                  type: string
+                productImage:
+                  type: string
+        required: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /products/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The product Id
+    get:
+      tags:
+        - Products
+      summary: Get Single Product
+      operationId: GetSingleProduct
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+    patch:
+      tags:
+        - Products
+      summary: Update Product
+      operationId: UpdateProduct
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+    delete:
+      tags:
+        - Products
+      summary: Delete Product
+      operationId: DeleteProduct
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /order:
+    post:
+      tags:
+        - Order
+      summary: Create Order
+      operationId: CreateOrder
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+            example:
+              cartItems:
+                - product: 620e60fb1a7e38265c81c946
+                  quantity: 2
+                - product: 620e60431a7e38265c81c942
+                  quantity: 3
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+    get:
+      tags:
+        - Order
+      summary: Get All Order
+      operationId: GetAllOrder
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /order/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Order ID
+    post:
+      tags:
+        - Order
+      summary: Add Shipping Details
+      operationId: AddShippingDetails
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddShippingDetailsRequest"
+            example:
+              name: John Smith
+              email: john@gmail.com
+              address: No.202, vyasarpadi, chennai
+              pincode: "134566"
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+    patch:
+      tags:
+        - Order
+      summary: Update Order
+      operationId: UpdateOrder
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /order/my-orders:
+    get:
+      tags:
+        - Order
+      summary: Get My Orders
+      operationId: GetMyOrders
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /order/my-single-order/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Order ID
+    get:
+      tags:
+        - Order
+      summary: Get My Single Order
+      operationId: GetMySingleOrder
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+  /checkout:
+    post:
+      tags:
+        - Checkout
+      summary: Create Checkout
+      operationId: CreateCheckout
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCheckoutRequest"
+            example:
+              orderId: 621242093e5a1a5c9307aba6
+        required: true
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+components:
+  schemas:
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+        - name
+        - email
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        name: Your Name
+        email: example@gmail.com
+        password: Secret@123
+    LoginRequest:
+      title: LoginRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: example@gmail.com
+        password: Secret@123
+    VerifyUserRequest:
+      title: VerifyUserRequest
+      required:
+        - verificationOtp
+      type: object
+      properties:
+        verificationOtp:
+          type: integer
+          format: int32
+      example:
+        verificationOtp: 521483
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+      example:
+        email: example@gmail.com
+    ResetPasswordRequest:
+      title: ResetPasswordRequest
+      required:
+        - email
+        - password
+        - verificationToken
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        verificationToken:
+          type: string
+      example:
+        email: example@gmail.com
+        password: Secret@123
+        verificationToken: 670c8f0cd02ac067e4f6f34130bfc1d5ff3245ecf66018134e97047661498a97feccd394083d288a
+    CreateOrderRequest:
+      title: CreateOrderRequest
+      required:
+        - cartItems
+      type: object
+      properties:
+        cartItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+          description: ""
+      example:
+        cartItems:
+          - product: 620e60fb1a7e38265c81c946
+            quantity: 2
+          - product: 620e60431a7e38265c81c942
+            quantity: 3
+    CartItem:
+      title: CartItem
+      required:
+        - product
+        - quantity
+      type: object
+      properties:
+        product:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+      example:
+        product: 620e60fb1a7e38265c81c946
+        quantity: 2
+    AddShippingDetailsRequest:
+      title: AddShippingDetailsRequest
+      required:
+        - name
+        - email
+        - address
+        - pincode
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        pincode:
+          type: string
+      example:
+        name: John Smith
+        email: john@gmail.com
+        address: No.202, vyasarpadi, chennai
+        pincode: "134566"
+    CreateCheckoutRequest:
+      title: CreateCheckoutRequest
+      required:
+        - orderId
+      type: object
+      properties:
+        orderId:
+          type: string
+      example:
+        orderId: 621242093e5a1a5c9307aba6
+tags:
+  - name: Auth
+  - name: Products
+  - name: Order
+  - name: Checkout

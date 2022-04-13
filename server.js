@@ -4,6 +4,11 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 
+// Docs related packages
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerDocs = YAML.load("./swagger.yaml");
+
 app.set("trust proxy", 1);
 
 // Security Packages
@@ -38,6 +43,8 @@ app.use(mongoSanitize());
 app.get("/", function (req, res) {
 	res.send("<h1> E-Commerce Api </h1>");
 });
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 // Routes
 app.use("/api/v1/auth", authRoute);
