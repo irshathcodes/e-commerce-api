@@ -41,7 +41,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(mongoSanitize());
 
 app.get("/", function (req, res) {
-	res.send("<h1> E-Commerce Api </h1>");
+	const fontFamily =
+		"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;";
+	res.send(
+		`<h1 style="${fontFamily}"> E-Commerce Api </h1> <a href="/api-docs" style="${fontFamily}">Api Docs</a>`
+	);
 });
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
