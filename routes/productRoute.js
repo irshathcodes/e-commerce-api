@@ -12,6 +12,7 @@ const {
 	createProduct,
 	updateProduct,
 	deleteProduct,
+	getAllCategories,
 } = require("../controllers/productController");
 
 router
@@ -29,5 +30,7 @@ router
 	.get(getSingleProduct)
 	.patch(authenticationMiddleware, authorizationPermission, updateProduct)
 	.delete(authenticationMiddleware, authorizationPermission, deleteProduct);
+
+router.get("/get/categories", getAllCategories);
 
 module.exports = router;

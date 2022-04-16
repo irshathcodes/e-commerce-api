@@ -68,6 +68,11 @@ async function getSingleProduct(req, res) {
 	res.status(200).json({ singleProduct });
 }
 
+async function getAllCategories(req, res) {
+	const product = await Product.distinct("category");
+	res.status(200).json(product);
+}
+
 async function createProduct(req, res) {
 	if (!req.body) throw new CustomError(400, "Bad Request");
 
@@ -117,6 +122,7 @@ async function deleteProduct(req, res) {
 module.exports = {
 	getAllProducts,
 	getSingleProduct,
+	getAllCategories,
 	createProduct,
 	updateProduct,
 	deleteProduct,
