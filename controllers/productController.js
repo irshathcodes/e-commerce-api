@@ -38,7 +38,9 @@ async function getAllProducts(req, res) {
 		const sortedList = sort.split(",").join(" ");
 		result = result.sort(sortedList);
 	} else {
-		result = result.sort("-createdAt");
+		// Choosing description to generate random products when there is no query is given. since mongoose don't have
+		// functions for randomizing data.
+		result = result.sort("-description");
 	}
 
 	// selecting specific fields in the products document
