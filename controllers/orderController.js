@@ -8,14 +8,19 @@ async function createOrder(req, res) {
 	const shippingfee = 30;
 	const tax = 12;
 
-	if (!cartItems || !shippingfee || !tax)
+	if (!cartItems)
 		throw new CustomError(400, "Please provide the required fields");
 
 	let orderItems = [];
 	let subtotal = 0;
 
 	for (let item of cartItems) {
-		if (!item || typeof item.quantity !== "number" || item.quantity < 1)
+		if (
+			!item ||
+			typeof item.quantity !== "number" ||
+			item.quantity < 1 ||
+			!item.size
+		)
 			throw new CustomError(400, "Please provide the required fields");
 
 		const dbProduct = await Product.findOne({ _id: item.product });
