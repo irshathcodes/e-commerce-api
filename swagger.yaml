@@ -4,7 +4,7 @@ info:
   contact: {}
   version: "1.0"
 servers:
-  - url: https://ecommercenode-api.herokuapp.com/api/v1
+  - url: https://ecommerce-api.up.railway.app/api/v1
     variables: {}
 paths:
   /auth/register:
