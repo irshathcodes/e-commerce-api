@@ -26,6 +26,12 @@ async function register(req, res) {
 	const verificationOtp = crypto.randomInt(100000, 999999);
 	const tokenExpiration = new Date(Date.now() + 1000 * 60 * 10);
 
+	await sendEmail({
+		to: email,
+		subject: "User Account Verification",
+		html: `<span> OTP Verification code: <h1> ${verificationOtp} </h1> </span>  `,
+	});
+
 	const user = await User.create({
 		name,
 		email,
@@ -33,13 +39,6 @@ async function register(req, res) {
 		verificationOtp,
 		tokenExpiration,
 	});
-
-	await sendEmail({
-		to: user.email,
-		subject: "User Account Verification",
-		html: `<span> OTP Verification code: <h1> ${user.verificationOtp} </h1> </span>  `,
-	});
-
 	const verificationToken = createJWT({ email: user.email }); // only object can expiration in JWT remember that.
 
 	res.cookie("verificationToken", verificationToken, {
