@@ -35,7 +35,7 @@ const orderRoute = require("./routes/orderRoute");
 const checkoutRoute = require("./routes/checkoutRoute");
 
 app.use(express.static("./public"));
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(mongoSanitize());
