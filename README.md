@@ -7,7 +7,7 @@ Basic E-Commerce Api created using Express js, MongoDB with mongoose library.
 
 ## Documentation
 
-[Documentation](https://ecommercenode-api.herokuapp.com/api-docs/)
+[Documentation](https://e-commerce-api-gzzm.onrender.com/api-docs/)
 
 
 
