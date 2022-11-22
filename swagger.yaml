@@ -4,7 +4,7 @@ info:
   contact: {}
   version: "1.0"
 servers:
-  - url: https://ecommerce-api.up.railway.app/api/v1
+  - url: https://e-commerce-api-gzzm.onrender.com/api
     variables: {}
 paths:
   /auth/register:
