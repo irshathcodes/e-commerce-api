@@ -4,7 +4,7 @@ info:
   contact: {}
   version: "1.0"
 servers:
-  - url: https://e-commerce-api-gzzm.onrender.com/api
+  - url: https://ecommerce-node-api.cyclic.app/api
     variables: {}
 paths:
   /auth/register:

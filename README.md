@@ -1,22 +1,16 @@
-
 # E-Commerce Api
 
 Basic E-Commerce Api created using Express js, MongoDB with mongoose library.
 
-
-
 ## Documentation
 
-[Documentation](https://ecommercenode-api.herokuapp.com/api-docs/)
-
-
+[Documentation](https://ecommerce-node-api.cyclic.app/api-docs/)
 
 ### To run this project
 
 ```bash
   npm install
 ```
-
 
 ## Environment Variables
 
@@ -37,9 +31,7 @@ To run this project, you will need to add the following environment variables to
 `CLOUDINARY_API_KEY`
 `CLOUDINARY_API_SECRET` - cloudinary credentials for storing product images.
 
-`CLIENT_DOMAIN` - 
+`CLIENT_DOMAIN` -
 client domain url for sending verification url and stripe success or failure url
 
-
 `NODE_ENV=production` - set it to production to enable http only cookie
-
