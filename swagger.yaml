@@ -4,7 +4,7 @@ info:
   contact: {}
   version: "1.0"
 servers:
-  - url: https://ecommerce-node-api.cyclic.app/api
+  - url: https://ecommerce-node-api.cyclic.app/api/v1
     variables: {}
 paths:
   /auth/register:
